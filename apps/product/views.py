@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -21,6 +21,20 @@ class GetListAllProduct(generics.ListAPIView):
 
 
 class CreateCategory(APIView):
+    """Создание Категории"""
     def post(self, request, format=None):
-        print("rest")
-        return Response('rest', status=status.HTTP_201_CREATED)
+        serializer = CategoryProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response('rest', status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateProduct(APIView):
+    """Создание Товара"""
+    def post(self, request, format=None):
+        serializer = ProductSmallSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response('rest', status=status.HTTP_400_BAD_REQUEST)
