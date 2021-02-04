@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -38,3 +39,17 @@ class CreateProduct(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response('rest', status=status.HTTP_400_BAD_REQUEST)
+
+
+class ItemCategoryViews(APIView):
+    """просмотры категорий элементов"""
+    def get_object(self, pk):
+        try:
+            return Category.objects.get(id=pk)
+        except Category.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        serializer = CategoryProductSerializer(snippet)
+        return Response(serializer.data)
